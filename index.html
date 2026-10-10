@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171326">
+  <title>Calculadora de Dano | Violet</title>
+
+  <style>
+    :root {
+      --bg: #100d18;
+      --surface: #1c1727;
+      --dark: #100d18;
+      --purple: #251b35;
+      --accent: #a782d4;
+      --gold: #e8c889;
+      --text: #f0eaf7;
+      --muted: #b1a5c2;
+      --border: #3a3049;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at top, #21172e 0%, var(--bg) 58%);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--dark);
+      color: white;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: auto;
+      padding: 22px 20px 26px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 30px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      background: #31234a;
+      border: 1px solid #57416d;
+      border-radius: 12px;
+      font-size: 25px;
+    }
+
+    .brand-name {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    .brand-caption {
+      margin-top: 4px;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: #c5b7d7;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: clamp(27px, 5vw, 38px);
+      letter-spacing: -1px;
+    }
+
+    .header-description {
+      margin: 0;
+      color: #c5bcd4;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1320px;
+      margin: 30px auto;
+      padding: 0 22px;
+    }
+
+    .section-heading {
+      margin-bottom: 17px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 6px;
+      font-size: 19px;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(210px, 0.72fr) minmax(320px, 1.12fr) minmax(300px, 0.96fr);
+      align-items: start;
+      gap: 18px;
+    }
+
+    .skill-panel {
+      position: sticky;
+      top: 20px;
+    }
+
+    .skill-panel .skill-option {
+      background: #211a2d;
+      border-color: #40334f;
+      color: var(--text);
+    }
+
+    .skill-panel .skill-option:hover {
+      background: #2a2039;
+      border-color: #80639f;
+    }
+
+    .skill-panel .skill-option[aria-pressed="true"] {
+      background: #38274c;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(167, 130, 212, .13);
+    }
+
+    .skill-panel .skill-icon {
+      background: #382949;
+    }
+
+    .panel {
+      padding: 23px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 5px 20px rgba(38, 26, 56, 0.035);
+    }
+
+    .panel h3 {
+      margin: 0 0 22px;
+      font-size: 15px;
+    }
+
+    .skill-selector {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .skill-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 13px;
+      color: var(--text);
+      text-align: left;
+      background: #211b2b;
+      border: 1px solid #40354f;
+      border-radius: 10px;
+      cursor: pointer;
+      font: inherit;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+    }
+
+    .skill-option:hover {
+      border-color: #bba6d2;
+      background: #2a2039;
+    }
+
+    .skill-option[aria-pressed="true"] {
+      border-color: var(--accent);
+      background: #38274c;
+      box-shadow: 0 0 0 2px rgba(118, 81, 165, .10);
+    }
+
+    .skill-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: #382949;
+      font-size: 22px;
+    }
+
+    .skill-option-copy strong {
+      display: block;
+      margin: 1px 0 4px;
+      font-size: 13px;
+    }
+
+
+
+    .field {
+      margin-bottom: 19px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 13px;
+      color: var(--text);
+      background: #211b2b;
+      border: 1px solid #40354f;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 15px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(118, 81, 165, .12);
+    }
+
+    .hint {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .result-panel {
+      position: sticky;
+      top: 20px;
+      overflow: hidden;
+      padding: 0;
+      background: var(--purple);
+      color: white;
+      border: 1px solid #473558;
+      border-radius: 14px;
+    }
+
+    .result-top {
+      padding: 23px;
+      border-bottom: 1px solid #4b3b5b;
+    }
+
+    .result-label {
+      color: #d6c7e9;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+    }
+
+    #damage, #adv-damage {
+      margin: 17px 0 10px;
+      color: var(--gold);
+      font-size: clamp(30px, 5vw, 42px);
+      font-weight: 750;
+      letter-spacing: -1px;
+      overflow-wrap: anywhere;
+    }
+
+    .result-subtitle {
+      color: #c5bcd4;
+      font-size: 12px;
+    }
+
+    .extra-results {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #4b3b5b;
+      display: grid;
+      gap: 13px;
+    }
+
+    .extra-result-label {
+      color: #e7d9f3;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .extra-result-value {
+      margin-top: 4px;
+      color: #fff;
+      font-size: 21px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .bugfix-control {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 4px 0 20px;
+      padding: 12px;
+      background: #211b2b;
+      border: 1px solid #40354f;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .pvp-control {
+      margin-top: -10px;
+    }
+
+    .bugfix-control input {
+      width: 17px;
+      height: 17px;
+      margin: 1px 0 0;
+      accent-color: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .bugfix-copy strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .bugfix-copy span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+
+    .reset {
+      width: 100%;
+      margin-top: 22px;
+      padding: 12px;
+      color: var(--purple);
+      background: #f0e8f7;
+      border: 1px solid #d9c9e8;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .reset:hover {
+      background: #e5d7f2;
+    }
+
+    .notice {
+      margin-top: 22px;
+      padding: 14px 16px;
+      background: #1c1727;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: #c7bbd8;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    footer {
+      max-width: 1320px;
+      margin: 35px auto 0;
+      padding: 22px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+
+    .page-tabs {
+      display: flex;
+      gap: 10px;
+      margin: 0 0 22px;
+      padding: 6px;
+      background: #1c1727;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .page-tab {
+      flex: 1;
+      padding: 12px 18px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+    .page-tab:hover { color: var(--text); background: #2a2039; }
+    .page-tab[aria-selected="true"] {
+      color: var(--text);
+      background: #38274c;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(167,130,212,.12);
+    }
+    .page-panel[hidden] { display: none !important; }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: minmax(190px, 0.72fr) minmax(280px, 1fr);
+      }
+      .skill-panel {
+        position: static;
+      }
+      .result-panel {
+        grid-column: 1 / -1;
+        position: static;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .header-inner {
+        padding: 20px 18px 24px;
+      }
+
+      main {
+        margin-top: 22px;
+        padding: 0 14px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .result-panel {
+        grid-column: auto;
+      }
+
+      .panel {
+        padding: 19px;
+      }
+
+      .result-panel {
+        position: static;
+      }
+
+      .brand {
+        margin-bottom: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">⚔</div>
+        <div>
+          <div class="brand-name">VIOLET</div>
+          <div class="brand-caption">GRAND FANTASIA</div>
+        </div>
+      </div>
+
+      <div class="eyebrow">Ferramenta da comunidade</div>
+      <h1>Calculadora de dano</h1>
+      <p class="header-description">
+        Configure seus multiplicadores e descubra o dano final.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-heading">
+      <h2>Calculadora</h2>
+      <p>Altere qualquer valor para atualizar o resultado automaticamente.</p>
+    </div>
+
+    <div class="page-tabs" role="tablist" aria-label="Versão da calculadora">
+      <button class="page-tab" id="tab-basic" type="button" role="tab" aria-selected="true" aria-controls="panel-basic">Básico</button>
+      <button class="page-tab" id="tab-advanced" type="button" role="tab" aria-selected="false" aria-controls="panel-advanced">Avançado</button>
+    </div>
+
+    <section class="page-panel" id="panel-basic" role="tabpanel" aria-labelledby="tab-basic">
+    <div class="layout">
+      <aside class="panel skill-panel">
+        <h3>Habilidades</h3>
+        <div class="skill-selector" role="group" aria-label="Selecionar habilidade">
+          <button class="skill-option" type="button" data-skill="flecha" aria-pressed="true">
+            <span class="skill-icon" aria-hidden="true">⚡</span>
+            <span class="skill-option-copy">
+              <strong>Flecha Relâmpago</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🗡️</span>
+            <span class="skill-option-copy">
+              <strong>Rasgo Cruel</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="letal" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">💥</span>
+            <span class="skill-option-copy">
+              <strong>Golpe Letal</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="adaga" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">☠️</span>
+            <span class="skill-option-copy">
+              <strong>Adaga Envenenada</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🏹</span>
+            <span class="skill-option-copy">
+              <strong>Tiro Poderoso Paralisante</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🪽</span>
+            <span class="skill-option-copy">
+              <strong>Flecha Afiada Multi-Asas</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🌑</span>
+            <span class="skill-option-copy">
+              <strong>Flecha Sombra</strong>
+            </span>
+          </button>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <h3>Multiplicadores de dano</h3>
+
+        <div class="field">
+          <label for="attack">Ataque</label>
+          <input id="attack" type="number"
+            min="0" step="any" value="1000">
+          <div class="hint">Valor numérico do ataque.</div>
+        </div>
+
+        <div class="field">
+          <label for="caused">Dano causado</label>
+          <input id="caused" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="weapon">Dano de arma</label>
+          <input id="weapon" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="critical">Dano crítico</label>
+          <input id="critical" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="skill">Dano de skill</label>
+          <input id="skill" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <label class="bugfix-control" for="bugfix">
+          <input id="bugfix" type="checkbox" checked>
+          <span class="bugfix-copy">
+            <strong>BugFix</strong>
+            <span>Ativado: os scalings de Tarot e da skill não recebem novamente Dano Causado. Desative para simular a mecânica bugada.</span>
+          </span>
+        </label>
+
+        <label class="bugfix-control pvp-control" for="pvp">
+          <input id="pvp" type="checkbox">
+          <span class="bugfix-copy">
+            <strong>PvP</strong>
+          </span>
+        </label>
+
+        <button class="reset" id="reset" type="button">
+          Restaurar valores iniciais
+        </button>
+      </section>
+
+      <section class="result-panel" aria-live="polite">
+        <div class="result-top">
+          <div class="result-label">DANO</div>
+          <div id="damage">1.000</div>
+          
+          <div class="extra-results">
+            <div>
+              <div class="extra-result-label">Tarot</div>
+              <div class="extra-result-value" id="tarotDamage">1.000</div>
+            </div>
+            <div>
+              <div class="extra-result-label" id="doubleLabel">Flecha Relâmpago — Duplo (0,8x)</div>
+              <div class="extra-result-value" id="doubleDamage">800</div>
+            </div>
+            <div>
+              <div class="extra-result-label" id="tripleLabel">Flecha Relâmpago — Triplo (0,4x)</div>
+              <div class="extra-result-value" id="tripleDamage">400</div>
+            </div>
+            <div>
+              <div class="extra-result-label" id="tarotComboLabel">Tarot após Duplo + Triplo</div>
+              <div class="extra-result-value" id="tarotComboDamage">1.200</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="notice">
+      <strong>Como funciona?</strong><br>
+      Cada multiplicador é aplicado diretamente ao resultado.
+      Por exemplo, 1,5 representa 150% e 3 representa 300%.
+      O cálculo é uma estimativa matemática configurável.
+    </div>
+    </section>
+    <section class="page-panel" id="panel-advanced" role="tabpanel" aria-labelledby="tab-advanced" hidden>
+    <div class="layout">
+      <aside class="panel skill-panel">
+        <h3>Habilidades</h3>
+        <div class="skill-selector" role="group" aria-label="Selecionar habilidade">
+          <button class="skill-option" type="button" data-skill="flecha" aria-pressed="true">
+            <span class="skill-icon" aria-hidden="true">⚡</span>
+            <span class="skill-option-copy">
+              <strong>Flecha Relâmpago</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🗡️</span>
+            <span class="skill-option-copy">
+              <strong>Rasgo Cruel</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="letal" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">💥</span>
+            <span class="skill-option-copy">
+              <strong>Golpe Letal</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="adaga" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">☠️</span>
+            <span class="skill-option-copy">
+              <strong>Adaga Envenenada</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🏹</span>
+            <span class="skill-option-copy">
+              <strong>Tiro Poderoso Paralisante</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🪽</span>
+            <span class="skill-option-copy">
+              <strong>Flecha Afiada Multi-Asas</strong>
+            </span>
+          </button>
+          <button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false">
+            <span class="skill-icon" aria-hidden="true">🌑</span>
+            <span class="skill-option-copy">
+              <strong>Flecha Sombra</strong>
+            </span>
+          </button>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <h3>Multiplicadores de dano</h3>
+
+        <div class="field">
+          <label for="adv-attack">Ataque</label>
+          <input id="adv-attack" type="number"
+            min="0" step="any" value="1000">
+          <div class="hint">Valor numérico do ataque.</div>
+        </div>
+
+        <div class="field">
+          <label for="adv-caused">Dano causado</label>
+          <input id="adv-caused" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="adv-weapon">Dano de arma</label>
+          <input id="adv-weapon" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="adv-critical">Dano crítico</label>
+          <input id="adv-critical" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="adv-skill">Dano de skill</label>
+          <input id="adv-skill" type="number"
+            min="0" step="any" value="1">
+          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+        </div>
+
+        <div class="field">
+          <label for="adv-skillFlat">Dano flat da skill</label>
+          <input id="adv-skillFlat" type="number" min="0" step="any" value="0">
+        </div>
+
+        <div class="field">
+          <label for="adv-causedFlat">Dano causado flat</label>
+          <input id="adv-causedFlat" type="number" min="0" step="any" value="0">
+        </div>
+
+        <div class="field">
+          <label for="adv-defense">Defesa</label>
+          <input id="adv-defense" type="number" min="0" step="any" value="0">
+        </div>
+
+        <div class="field">
+          <label for="adv-level">Nível do personagem</label>
+          <input id="adv-level" type="number" min="0" step="1" value="100">
+        </div>
+
+        <div class="field">
+          <label for="adv-penetration">Penetração</label>
+          <input id="adv-penetration" type="number" min="0" max="1" step="any" value="0">
+          <div class="hint">0,5 = 50% · 1 = 100%</div>
+        </div>
+
+        <div class="field">
+          <label for="adv-antiPenetration">Anti-Penetração</label>
+          <input id="adv-antiPenetration" type="number" min="0" max="1" step="any" value="0">
+          <div class="hint">Reduz a Penetração adversária na mesma proporção</div>
+        </div>
+
+        <label class="bugfix-control" for="adv-bugfix">
+          <input id="adv-bugfix" type="checkbox" checked>
+          <span class="bugfix-copy">
+            <strong>BugFix</strong>
+            <span>Ativado: os scalings de Tarot e da skill não recebem novamente Dano Causado. Desative para simular a mecânica bugada.</span>
+          </span>
+        </label>
+
+        <label class="bugfix-control pvp-control" for="adv-pvp">
+          <input id="adv-pvp" type="checkbox">
+          <span class="bugfix-copy">
+            <strong>PvP</strong>
+          </span>
+        </label>
+
+        <button class="reset" id="adv-reset" type="button">
+          Restaurar valores iniciais
+        </button>
+      </section>
+
+      <section class="result-panel" aria-live="polite">
+        <div class="result-top">
+          <div class="result-label">DANO</div>
+          <div id="adv-damage">1.000</div>
+          
+          <div class="extra-results">
+            <div>
+              <div class="extra-result-label">Tarot</div>
+              <div class="extra-result-value" id="adv-tarotDamage">1.000</div>
+            </div>
+            <div>
+              <div class="extra-result-label" id="adv-doubleLabel">Flecha Relâmpago — Duplo (0,8x)</div>
+              <div class="extra-result-value" id="adv-doubleDamage">800</div>
+            </div>
+            <div>
+              <div class="extra-result-label" id="adv-tripleLabel">Flecha Relâmpago — Triplo (0,4x)</div>
+              <div class="extra-result-value" id="adv-tripleDamage">400</div>
+            </div>
+            <div>
+              <div class="extra-result-label" id="adv-tarotComboLabel">Tarot após Duplo + Triplo</div>
+              <div class="extra-result-value" id="adv-tarotComboDamage">1.200</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="notice">
+      <strong>Como funciona?</strong><br>
+      Cada multiplicador é aplicado diretamente ao resultado.
+      Por exemplo, 1,5 representa 150% e 3 representa 300%.
+      O cálculo é uma estimativa matemática configurável.
+    </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Calculadora comunitária de Grand Fantasia Violet.<br>
+    Projeto independente, não oficial e sem afiliação com os
+    desenvolvedores ou operadores do jogo.
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const skillDefinitions = {
+        flecha: { name: "Flecha Relâmpago", double: 0.8, triple: 0.4 },
+        rasgo: { name: "Rasgo Cruel", double: 0.75, triple: 0.7 },
+        letal: { name: "Golpe Letal", double: 0.6, triple: 0.3 },
+        adaga: { name: "Adaga Envenenada", double: 0.75, triple: 0.7 },
+        tiroParalisante: { name: "Tiro Poderoso Paralisante", double: 0.8, triple: 0.4 },
+        flechaMultiAsas: { name: "Flecha Afiada Multi-Asas", double: 0.8, triple: 0.4 },
+        flechaSombra: { name: "Flecha Sombra", double: 0.7, triple: 0.35 }
+      };
+
+      function setupCalculator(panel, prefix = "") {
+        const get = (id) => panel.querySelector(`#${prefix}${id}`);
+        const fields = ["attack", "caused", "weapon", "critical", "skill"];
+        const damageElement = get("damage");
+        const tarotElement = get("tarotDamage");
+        const doubleElement = get("doubleDamage");
+        const tripleElement = get("tripleDamage");
+        const tarotComboElement = get("tarotComboDamage");
+        const bugfixElement = get("bugfix");
+        const pvpElement = get("pvp");
+        const doubleLabel = get("doubleLabel");
+        const tripleLabel = get("tripleLabel");
+        const tarotComboLabel = get("tarotComboLabel");
+        const skillButtons = Array.from(panel.querySelectorAll("[data-skill]"));
+        let selectedSkill = "flecha";
+
+        function formatNumber(value) {
+          return value.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+        }
+
+        function selectSkill(skillId) {
+          if (!skillDefinitions[skillId]) return;
+          selectedSkill = skillId;
+          const skill = skillDefinitions[selectedSkill];
+          skillButtons.forEach((button) => {
+            button.setAttribute("aria-pressed", String(button.dataset.skill === selectedSkill));
+          });
+          doubleLabel.textContent = `${skill.name} — Duplo`;
+          tripleLabel.textContent = `${skill.name} — Triplo`;
+          tarotComboLabel.textContent = "Tarot";
+          calculateDamage();
+        }
+
+        function calculateDamage() {
+          const values = fields.map((id) => {
+            const raw = get(id).value.trim();
+            return raw === "" ? null : Number(raw);
+          });
+          if (values.some((value) => value === null || !Number.isFinite(value) || value < 0)) {
+            [damageElement, tarotElement, doubleElement, tripleElement, tarotComboElement]
+              .forEach((element) => { element.textContent = "—"; });
+            return;
+          }
+
+          const [attack, caused, weapon, critical, skill] = values;
+          const skillConfig = skillDefinitions[selectedSkill];
+          const bugMultiplier = bugfixElement.checked ? 1 : caused;
+          const pvpMultiplier = pvpElement.checked ? 0.3 : 1;
+
+          // Parcela 1: dano baseado no ataque. Esta é a única parcela reduzida pela defesa.
+          const attackDamageBeforeDefense = attack * weapon * caused * critical * skill;
+          let attackDamageAfterDefense = attackDamageBeforeDefense;
+          let flatDamage = 0;
+
+          if (prefix === "adv-") {
+            const defenseRaw = get("defense").value.trim();
+            const levelRaw = get("level").value.trim();
+            const skillFlatRaw = get("skillFlat").value.trim();
+            const causedFlatRaw = get("causedFlat").value.trim();
+            const penetrationRaw = get("penetration").value.trim();
+            const antiPenetrationRaw = get("antiPenetration").value.trim();
+            const defense = defenseRaw === "" ? null : Number(defenseRaw);
+            const level = levelRaw === "" ? null : Number(levelRaw);
+            const skillFlat = skillFlatRaw === "" ? null : Number(skillFlatRaw);
+            const causedFlat = causedFlatRaw === "" ? null : Number(causedFlatRaw);
+            const penetration = penetrationRaw === "" ? null : Number(penetrationRaw);
+            const antiPenetration = antiPenetrationRaw === "" ? null : Number(antiPenetrationRaw);
+
+            if (
+              defense === null || level === null || skillFlat === null || causedFlat === null ||
+              penetration === null || antiPenetration === null ||
+              !Number.isFinite(defense) || !Number.isFinite(level) ||
+              !Number.isFinite(skillFlat) || !Number.isFinite(causedFlat) ||
+              !Number.isFinite(penetration) || !Number.isFinite(antiPenetration) ||
+              defense < 0 || level < 0 || skillFlat < 0 || causedFlat < 0 ||
+              penetration < 0 || penetration > 1 || antiPenetration < 0 || antiPenetration > 1
+            ) {
+              [damageElement, tarotElement, doubleElement, tripleElement, tarotComboElement]
+                .forEach((element) => { element.textContent = "—"; });
+              return;
+            }
+
+            // Anti-Penetração anula a Penetração adversária proporcionalmente.
+            // A penetração efetiva nunca fica abaixo de 0 nem acima de 100%.
+            const effectivePenetration = Math.max(0, Math.min(1, penetration - antiPenetration));
+            const effectiveDefense = defense * (1 - effectivePenetration);
+            // Defesa: max(0, 1 - defesa efetiva / ((nível + 9) * 100)).
+            // Nível 100 e defesa 10900 anulam somente a parcela baseada no ataque.
+            const defenseMultiplier = Math.max(0, 1 - effectiveDefense / ((level + 9) * 100));
+            attackDamageAfterDefense = attackDamageBeforeDefense * defenseMultiplier;
+
+            // Parcela 2: flats somados e multiplicados por Dano Causado, Crítico e Skill.
+            // A defesa NÃO reduz esta parcela.
+            flatDamage = (skillFlat + causedFlat) * caused * critical * skill;
+          }
+
+          // Dano principal = parcela de ataque após defesa + parcela flat; PvP afeta o total.
+          const finalDamage = (attackDamageAfterDefense + flatDamage) * pvpMultiplier;
+
+          // Na aba Avançado, Tarot/Duplo/Triplo partem do dano geral do golpe:
+          // parcela de ataque após defesa + parcela flat. Os scalings atuais continuam aplicados.
+          // A aba Básico preserva o comportamento original.
+          const sideDamage = prefix === "adv-"
+            ? (attackDamageAfterDefense + flatDamage)
+            : attackDamageBeforeDefense;
+          const tarotDamage = sideDamage * bugMultiplier * pvpMultiplier;
+          const doubleDamage = sideDamage * skillConfig.double * bugMultiplier * pvpMultiplier;
+          const tripleDamage = sideDamage * skillConfig.triple * bugMultiplier * pvpMultiplier;
+          const combinedArrowDamage = sideDamage * skillConfig.double * bugMultiplier +
+            sideDamage * skillConfig.triple * bugMultiplier;
+          const tarotComboDamage = combinedArrowDamage * bugMultiplier * pvpMultiplier;
+
+          damageElement.textContent = formatNumber(finalDamage);
+          tarotElement.textContent = formatNumber(tarotDamage);
+          doubleElement.textContent = formatNumber(doubleDamage);
+          tripleElement.textContent = formatNumber(tripleDamage);
+          tarotComboElement.textContent = formatNumber(tarotComboDamage);
+        }
+
+        fields.forEach((id) => get(id).addEventListener("input", calculateDamage));
+        if (prefix === "adv-") {
+          get("skillFlat").addEventListener("input", calculateDamage);
+          get("causedFlat").addEventListener("input", calculateDamage);
+          get("defense").addEventListener("input", calculateDamage);
+          get("level").addEventListener("input", calculateDamage);
+          get("penetration").addEventListener("input", calculateDamage);
+          get("antiPenetration").addEventListener("input", calculateDamage);
+        }
+        skillButtons.forEach((button) => button.addEventListener("click", () => selectSkill(button.dataset.skill)));
+        bugfixElement.addEventListener("change", calculateDamage);
+        pvpElement.addEventListener("change", calculateDamage);
+        get("reset").addEventListener("click", () => {
+          const defaults = { attack: 1000, caused: 1, weapon: 1, critical: 1, skill: 1 };
+          fields.forEach((id) => { get(id).value = defaults[id]; });
+          if (prefix) {
+            get("skillFlat").value = 0;
+            get("causedFlat").value = 0;
+            get("defense").value = 0;
+            get("level").value = 100;
+            get("penetration").value = 0;
+            get("antiPenetration").value = 0;
+          }
+          bugfixElement.checked = true;
+          pvpElement.checked = false;
+          calculateDamage();
+        });
+        selectSkill("flecha");
+      }
+
+      setupCalculator(document.getElementById("panel-basic"));
+      setupCalculator(document.getElementById("panel-advanced"), "adv-");
+
+      const tabs = [
+        { button: document.getElementById("tab-basic"), panel: document.getElementById("panel-basic") },
+        { button: document.getElementById("tab-advanced"), panel: document.getElementById("panel-advanced") }
+      ];
+      tabs.forEach(({ button, panel }) => button.addEventListener("click", () => {
+        tabs.forEach((tab) => {
+          const active = tab === tabs.find((item) => item.button === button);
+          tab.button.setAttribute("aria-selected", String(active));
+          tab.panel.hidden = !active;
+        });
+      }));
+    })();
+  </script>
+</body>
+</html>
