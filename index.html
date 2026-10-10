@@ -150,6 +150,21 @@
       background: #382949;
     }
 
+
+    .class-list { display: grid; gap: 8px; }
+    .class-group { border: 1px solid #40334f; border-radius: 10px; overflow: hidden; }
+    .class-toggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      width: 100%; padding: 12px 13px; border: 0; background: #211a2d; color: var(--text);
+      text-align: left; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .class-toggle:hover, .class-toggle[aria-expanded="true"] { background: #38274c; }
+    .class-toggle span { color: var(--muted); font-size: 17px; }
+    .class-skills { display: grid; gap: 6px; padding: 8px; background: rgba(0,0,0,.10); }
+    .class-skills[hidden] { display: none !important; }
+    .class-skills .skill-option { padding: 10px; }
+    .class-empty { margin: 4px; color: var(--muted); font-size: 12px; }
+
     .panel {
       padding: 23px;
       background: var(--surface);
@@ -251,6 +266,17 @@
       font-size: 11px;
     }
 
+    .advanced-fields-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 18px;
+      align-items: start;
+    }
+
+    .advanced-fields-grid .field {
+      min-width: 0;
+    }
+
     .result-panel {
       position: sticky;
       top: 20px;
@@ -274,7 +300,7 @@
       letter-spacing: 1.5px;
     }
 
-    #damage, #adv-damage {
+    #damage, #adv-damage, #elem-damage {
       margin: 17px 0 10px;
       color: var(--gold);
       font-size: clamp(30px, 5vw, 42px);
@@ -309,6 +335,14 @@
       font-weight: 750;
       overflow-wrap: anywhere;
     }
+
+    .critical-error {
+      margin-top: 6px;
+      color: #ff9b9b;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .critical-error[hidden] { display: none !important; }
 
     .bugfix-control {
       display: flex;
@@ -424,6 +458,9 @@
       .layout {
         grid-template-columns: minmax(190px, 0.72fr) minmax(280px, 1fr);
       }
+      .advanced-fields-grid {
+        grid-template-columns: 1fr;
+      }
       .skill-panel {
         position: static;
       }
@@ -493,6 +530,7 @@
     <div class="page-tabs" role="tablist" aria-label="Versão da calculadora">
       <button class="page-tab" id="tab-basic" type="button" role="tab" aria-selected="true" aria-controls="panel-basic">Básico</button>
       <button class="page-tab" id="tab-advanced" type="button" role="tab" aria-selected="false" aria-controls="panel-advanced">Avançado</button>
+      <button class="page-tab" id="tab-elemental" type="button" role="tab" aria-selected="false" aria-controls="panel-elemental">Elemental(Incompleto)</button>
     </div>
 
     <section class="page-panel" id="panel-basic" role="tabpanel" aria-labelledby="tab-basic">
@@ -500,50 +538,83 @@
       <aside class="panel skill-panel">
         <h3>Habilidades</h3>
         <div class="skill-selector" role="group" aria-label="Selecionar habilidade">
-          <button class="skill-option" type="button" data-skill="flecha" aria-pressed="true">
-            <span class="skill-icon" aria-hidden="true">⚡</span>
-            <span class="skill-option-copy">
-              <strong>Flecha Relâmpago</strong>
-            </span>
+          <button class="skill-option" type="button" data-skill="qualquer" aria-pressed="false">
+            <span class="skill-option-copy"><strong>Habilidade qualquer</strong></span>
           </button>
-          <button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🗡️</span>
-            <span class="skill-option-copy">
-              <strong>Rasgo Cruel</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="letal" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">💥</span>
-            <span class="skill-option-copy">
-              <strong>Golpe Letal</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="adaga" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">☠️</span>
-            <span class="skill-option-copy">
-              <strong>Adaga Envenenada</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🏹</span>
-            <span class="skill-option-copy">
-              <strong>Tiro Poderoso Paralisante</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🪽</span>
-            <span class="skill-option-copy">
-              <strong>Flecha Afiada Multi-Asas</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🌑</span>
-            <span class="skill-option-copy">
-              <strong>Flecha Sombra</strong>
-            </span>
-          </button>
-        </div>
-      </aside>
+          <div class="class-list" aria-label="Classes">
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-0" aria-expanded="false">Cavaleiro Sagrado<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-0" hidden>
+<button class="skill-option" type="button" data-skill="golpeSangrento" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe Sangrento</strong></span></button>
+<button class="skill-option" type="button" data-skill="tempestadeCortante" aria-pressed="false"><span class="skill-option-copy"><strong>Tempestade Cortante</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-1" aria-expanded="false">Destruidor<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-1" hidden>
+<button class="skill-option" type="button" data-skill="tempestadeCortante" aria-pressed="false"><span class="skill-option-copy"><strong>Tempestade Cortante</strong></span></button>
+<button class="skill-option" type="button" data-skill="corteSaltado" aria-pressed="false"><span class="skill-option-copy"><strong>Corte Saltado</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-2" aria-expanded="true">Bruxo<span aria-hidden="true">−</span></button>
+            <div class="class-skills" data-class-group="class-2"  >
+<button class="skill-option" type="button" data-skill="flecha" aria-pressed="true"><span class="skill-option-copy"><strong>Flecha Relâmpago</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-3" aria-expanded="false">Shinigami<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-3" hidden>
+<button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false"><span class="skill-option-copy"><strong>Flecha Sombra</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-4" aria-expanded="false">Predador<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-4" hidden>
+<button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false"><span class="skill-option-copy"><strong>Tiro Poderoso Paralisante</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-5" aria-expanded="false">Ninja<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-5" hidden>
+<button class="skill-option" type="button" data-skill="adaga" aria-pressed="false"><span class="skill-option-copy"><strong>Adaga Envenenada</strong></span></button>
+<button class="skill-option" type="button" data-skill="letal" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe Letal</strong></span></button>
+<button class="skill-option" type="button" data-skill="apunhaladaSombras" aria-pressed="false"><span class="skill-option-copy"><strong>Apunhalada das Sombras</strong></span></button>
+<button class="skill-option" type="button" data-skill="ataqueFurtivo" aria-pressed="false"><span class="skill-option-copy"><strong>Ataque Furtivo</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-6" aria-expanded="false">Santo<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-6" hidden>
+<button class="skill-option" type="button" data-skill="luzExplosiva" aria-pressed="false"><span class="skill-option-copy"><strong>Luz Explosiva</strong></span></button>
+<button class="skill-option" type="button" data-skill="batedorImpetuosoSagrado" aria-pressed="false"><span class="skill-option-copy"><strong>Batedor Impetuoso Sagrado</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-7" aria-expanded="false">Druida<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-7" hidden>
+<button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false"><span class="skill-option-copy"><strong>Rasgo Cruel</strong></span></button>
+<button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false"><span class="skill-option-copy"><strong>Flecha Afiada Multi-Asas</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-8" aria-expanded="false">Ômega<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-8" hidden>
+<button class="skill-option" type="button" data-skill="talhoPulsanteSupremo" aria-pressed="false"><span class="skill-option-copy"><strong>Talho Pulsante Supremo</strong></span></button>
+<button class="skill-option" type="button" data-skill="corteNucleoSupremo" aria-pressed="false"><span class="skill-option-copy"><strong>Corte de Núcleo Supremo</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-9" aria-expanded="false">Titã Celeste<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-9" hidden>
+<p class="class-empty">Nenhuma habilidade cadastrada ainda.</p>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-10" aria-expanded="false">Mestre Dimensional<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-10" hidden>
+<button class="skill-option" type="button" data-skill="lampejoTeletransporte" aria-pressed="false"><span class="skill-option-copy"><strong>Lampejo de Teletransporte</strong></span></button>
+<button class="skill-option" type="button" data-skill="dancaCortanteCristal" aria-pressed="false"><span class="skill-option-copy"><strong>Dança Cortante de Cristal</strong></span></button>
+<button class="skill-option" type="button" data-skill="golpeDestruicao" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe da Destruição</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-11" aria-expanded="false">Cronos<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-11" hidden>
+<button class="skill-option" type="button" data-skill="aniquilacaoTempo" aria-pressed="false"><span class="skill-option-copy"><strong>Aniquilação do Tempo</strong></span></button>
+<button class="skill-option" type="button" data-skill="rompimentoTempo" aria-pressed="false"><span class="skill-option-copy"><strong>Rompimento do Tempo</strong></span></button>
+<button class="skill-option" type="button" data-skill="explosaoCaos" aria-pressed="false"><span class="skill-option-copy"><strong>Explosão do Caos</strong></span></button>
+</div></div>
+</div></div></aside>
 
       <section class="panel">
         <h3>Multiplicadores de dano</h3>
@@ -572,7 +643,8 @@
         <div class="field">
           <label for="critical">Dano crítico</label>
           <input id="critical" type="number"
-            min="0" step="any" value="1">
+            min="1" step="any" value="1" aria-describedby="critical-error">
+          <div class="critical-error" id="critical-error" role="alert" hidden>O dano crítico não pode ser menor que 1.</div>
           <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
         </div>
 
@@ -587,7 +659,6 @@
           <input id="bugfix" type="checkbox" checked>
           <span class="bugfix-copy">
             <strong>BugFix</strong>
-            <span>Ativado: os scalings de Tarot e da skill não recebem novamente Dano Causado. Desative para simular a mecânica bugada.</span>
           </span>
         </label>
 
@@ -614,27 +685,32 @@
               <div class="extra-result-value" id="tarotDamage">1.000</div>
             </div>
             <div>
+              <div class="extra-result-label">Tarot</div>
+              <div class="extra-result-value" id="tarotDamage2">1.000</div>
+            </div>
+            <div id="doubleResult">
               <div class="extra-result-label" id="doubleLabel">Flecha Relâmpago — Duplo (0,8x)</div>
               <div class="extra-result-value" id="doubleDamage">800</div>
             </div>
-            <div>
+            <div id="tripleResult">
               <div class="extra-result-label" id="tripleLabel">Flecha Relâmpago — Triplo (0,4x)</div>
               <div class="extra-result-value" id="tripleDamage">400</div>
             </div>
-            <div>
+            <div id="tarotComboResult">
               <div class="extra-result-label" id="tarotComboLabel">Tarot após Duplo + Triplo</div>
               <div class="extra-result-value" id="tarotComboDamage">1.200</div>
             </div>
+            <div id="tarotComboResult2">
+              <div class="extra-result-label" id="tarotComboLabel2">Tarot após Duplo + Triplo</div>
+              <div class="extra-result-value" id="tarotComboDamage2">1.200</div>
+            </div>
+          </div>
+          <div class="extra-results" style="margin-top:18px; border-top:1px solid #4b3b5b; padding-top:14px;">
+            <div class="extra-result-label">Dano Total</div>
+            <div class="extra-result-value" id="totalDamage">0</div>
           </div>
         </div>
       </section>
-    </div>
-
-    <div class="notice">
-      <strong>Como funciona?</strong><br>
-      Cada multiplicador é aplicado diretamente ao resultado.
-      Por exemplo, 1,5 representa 150% e 3 representa 300%.
-      O cálculo é uma estimativa matemática configurável.
     </div>
     </section>
     <section class="page-panel" id="panel-advanced" role="tabpanel" aria-labelledby="tab-advanced" hidden>
@@ -642,126 +718,166 @@
       <aside class="panel skill-panel">
         <h3>Habilidades</h3>
         <div class="skill-selector" role="group" aria-label="Selecionar habilidade">
-          <button class="skill-option" type="button" data-skill="flecha" aria-pressed="true">
-            <span class="skill-icon" aria-hidden="true">⚡</span>
-            <span class="skill-option-copy">
-              <strong>Flecha Relâmpago</strong>
-            </span>
+          <button class="skill-option" type="button" data-skill="qualquer" aria-pressed="false">
+            <span class="skill-option-copy"><strong>Habilidade qualquer</strong></span>
           </button>
-          <button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🗡️</span>
-            <span class="skill-option-copy">
-              <strong>Rasgo Cruel</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="letal" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">💥</span>
-            <span class="skill-option-copy">
-              <strong>Golpe Letal</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="adaga" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">☠️</span>
-            <span class="skill-option-copy">
-              <strong>Adaga Envenenada</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🏹</span>
-            <span class="skill-option-copy">
-              <strong>Tiro Poderoso Paralisante</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🪽</span>
-            <span class="skill-option-copy">
-              <strong>Flecha Afiada Multi-Asas</strong>
-            </span>
-          </button>
-          <button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false">
-            <span class="skill-icon" aria-hidden="true">🌑</span>
-            <span class="skill-option-copy">
-              <strong>Flecha Sombra</strong>
-            </span>
-          </button>
-        </div>
-      </aside>
+          <div class="class-list" aria-label="Classes">
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-0" aria-expanded="false">Cavaleiro Sagrado<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-0" hidden>
+<button class="skill-option" type="button" data-skill="golpeSangrento" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe Sangrento</strong></span></button>
+<button class="skill-option" type="button" data-skill="tempestadeCortante" aria-pressed="false"><span class="skill-option-copy"><strong>Tempestade Cortante</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-1" aria-expanded="false">Destruidor<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-1" hidden>
+<button class="skill-option" type="button" data-skill="tempestadeCortante" aria-pressed="false"><span class="skill-option-copy"><strong>Tempestade Cortante</strong></span></button>
+<button class="skill-option" type="button" data-skill="corteSaltado" aria-pressed="false"><span class="skill-option-copy"><strong>Corte Saltado</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-2" aria-expanded="true">Bruxo<span aria-hidden="true">−</span></button>
+            <div class="class-skills" data-class-group="class-2"  >
+<button class="skill-option" type="button" data-skill="flecha" aria-pressed="true"><span class="skill-option-copy"><strong>Flecha Relâmpago</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-3" aria-expanded="false">Shinigami<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-3" hidden>
+<button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false"><span class="skill-option-copy"><strong>Flecha Sombra</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-4" aria-expanded="false">Predador<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-4" hidden>
+<button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false"><span class="skill-option-copy"><strong>Tiro Poderoso Paralisante</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-5" aria-expanded="false">Ninja<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-5" hidden>
+<button class="skill-option" type="button" data-skill="adaga" aria-pressed="false"><span class="skill-option-copy"><strong>Adaga Envenenada</strong></span></button>
+<button class="skill-option" type="button" data-skill="letal" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe Letal</strong></span></button>
+<button class="skill-option" type="button" data-skill="apunhaladaSombras" aria-pressed="false"><span class="skill-option-copy"><strong>Apunhalada das Sombras</strong></span></button>
+<button class="skill-option" type="button" data-skill="ataqueFurtivo" aria-pressed="false"><span class="skill-option-copy"><strong>Ataque Furtivo</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-6" aria-expanded="false">Santo<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-6" hidden>
+<button class="skill-option" type="button" data-skill="luzExplosiva" aria-pressed="false"><span class="skill-option-copy"><strong>Luz Explosiva</strong></span></button>
+<button class="skill-option" type="button" data-skill="batedorImpetuosoSagrado" aria-pressed="false"><span class="skill-option-copy"><strong>Batedor Impetuoso Sagrado</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-7" aria-expanded="false">Druida<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-7" hidden>
+<button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false"><span class="skill-option-copy"><strong>Rasgo Cruel</strong></span></button>
+<button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false"><span class="skill-option-copy"><strong>Flecha Afiada Multi-Asas</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-8" aria-expanded="false">Ômega<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-8" hidden>
+<button class="skill-option" type="button" data-skill="talhoPulsanteSupremo" aria-pressed="false"><span class="skill-option-copy"><strong>Talho Pulsante Supremo</strong></span></button>
+<button class="skill-option" type="button" data-skill="corteNucleoSupremo" aria-pressed="false"><span class="skill-option-copy"><strong>Corte de Núcleo Supremo</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-9" aria-expanded="false">Titã Celeste<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-9" hidden>
+<p class="class-empty">Nenhuma habilidade cadastrada ainda.</p>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-10" aria-expanded="false">Mestre Dimensional<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-10" hidden>
+<button class="skill-option" type="button" data-skill="lampejoTeletransporte" aria-pressed="false"><span class="skill-option-copy"><strong>Lampejo de Teletransporte</strong></span></button>
+<button class="skill-option" type="button" data-skill="dancaCortanteCristal" aria-pressed="false"><span class="skill-option-copy"><strong>Dança Cortante de Cristal</strong></span></button>
+<button class="skill-option" type="button" data-skill="golpeDestruicao" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe da Destruição</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-11" aria-expanded="false">Cronos<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-11" hidden>
+<button class="skill-option" type="button" data-skill="aniquilacaoTempo" aria-pressed="false"><span class="skill-option-copy"><strong>Aniquilação do Tempo</strong></span></button>
+<button class="skill-option" type="button" data-skill="rompimentoTempo" aria-pressed="false"><span class="skill-option-copy"><strong>Rompimento do Tempo</strong></span></button>
+<button class="skill-option" type="button" data-skill="explosaoCaos" aria-pressed="false"><span class="skill-option-copy"><strong>Explosão do Caos</strong></span></button>
+</div></div>
+</div></div></aside>
 
-      <section class="panel">
+      <section class="panel advanced-input-panel">
         <h3>Multiplicadores de dano</h3>
 
-        <div class="field">
-          <label for="adv-attack">Ataque</label>
-          <input id="adv-attack" type="number"
-            min="0" step="any" value="1000">
-          <div class="hint">Valor numérico do ataque.</div>
-        </div>
+        <div class="advanced-fields-grid">
+          <div>
+            <div class="field">
+              <label for="adv-attack">Ataque</label>
+              <input id="adv-attack" type="number" min="0" step="any" value="1000">
+              <div class="hint">Valor numérico do ataque.</div>
+            </div>
 
-        <div class="field">
-          <label for="adv-caused">Dano causado</label>
-          <input id="adv-caused" type="number"
-            min="0" step="any" value="1">
-          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
-        </div>
+            <div class="field">
+              <label for="adv-skillFlat">Dano base da skill</label>
+              <input id="adv-skillFlat" type="number" min="0" step="any" value="0">
+            </div>
 
-        <div class="field">
-          <label for="adv-weapon">Dano de arma</label>
-          <input id="adv-weapon" type="number"
-            min="0" step="any" value="1">
-          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
-        </div>
+            <div class="field">
+              <label for="adv-causedFlat">Dano causado flat</label>
+              <input id="adv-causedFlat" type="number" min="0" step="any" value="0">
+            </div>
 
-        <div class="field">
-          <label for="adv-critical">Dano crítico</label>
-          <input id="adv-critical" type="number"
-            min="0" step="any" value="1">
-          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
-        </div>
+            <div class="field">
+              <label for="adv-caused">Dano causado</label>
+              <input id="adv-caused" type="number" min="0" step="any" value="1">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
 
-        <div class="field">
-          <label for="adv-skill">Dano de skill</label>
-          <input id="adv-skill" type="number"
-            min="0" step="any" value="1">
-          <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
-        </div>
+            <div class="field">
+              <label for="adv-weapon">Dano de arma</label>
+              <input id="adv-weapon" type="number" min="0" step="any" value="1">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
 
-        <div class="field">
-          <label for="adv-skillFlat">Dano flat da skill</label>
-          <input id="adv-skillFlat" type="number" min="0" step="any" value="0">
-        </div>
+            <div class="field">
+              <label for="adv-critical">Dano crítico</label>
+              <input id="adv-critical" type="number" min="1" step="any" value="1" aria-describedby="adv-critical-error">
+              <div class="critical-error" id="adv-critical-error" role="alert" hidden>O dano crítico não pode ser menor que 1.</div>
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
 
-        <div class="field">
-          <label for="adv-causedFlat">Dano causado flat</label>
-          <input id="adv-causedFlat" type="number" min="0" step="any" value="0">
-        </div>
+            <div class="field">
+              <label for="adv-skill">Dano de skill</label>
+              <input id="adv-skill" type="number" min="0" step="any" value="1">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
+          </div>
 
-        <div class="field">
-          <label for="adv-defense">Defesa</label>
-          <input id="adv-defense" type="number" min="0" step="any" value="0">
-        </div>
+          <div>
+            <div class="field">
+              <label for="adv-defense">Defesa</label>
+              <input id="adv-defense" type="number" min="0" step="any" value="0">
+            </div>
 
-        <div class="field">
-          <label for="adv-level">Nível do personagem</label>
-          <input id="adv-level" type="number" min="0" step="1" value="100">
-        </div>
+            <div class="field">
+              <label for="adv-defenseMultiplier">Multiplicador de defesa</label>
+              <input id="adv-defenseMultiplier" type="number" min="0" step="any" value="1">
+            </div>
 
-        <div class="field">
-          <label for="adv-penetration">Penetração</label>
-          <input id="adv-penetration" type="number" min="0" max="1" step="any" value="0">
-          <div class="hint">0,5 = 50% · 1 = 100%</div>
-        </div>
+            <div class="field">
+              <label for="adv-trinca">Trinca</label>
+              <input id="adv-trinca" type="number" min="0" step="any" value="0">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
 
-        <div class="field">
-          <label for="adv-antiPenetration">Anti-Penetração</label>
-          <input id="adv-antiPenetration" type="number" min="0" max="1" step="any" value="0">
-          <div class="hint">Reduz a Penetração adversária na mesma proporção</div>
+            <div class="field">
+              <label for="adv-level">Nível do atacante</label>
+              <input id="adv-level" type="number" min="0" step="1" value="100">
+            </div>
+
+            <div class="field">
+              <label for="adv-penetration">Penetração</label>
+              <input id="adv-penetration" type="number" min="0" max="1" step="any" value="0">
+              <div class="hint">0,5 = 50% · 1 = 100%</div>
+            </div>
+
+          </div>
         </div>
 
         <label class="bugfix-control" for="adv-bugfix">
           <input id="adv-bugfix" type="checkbox" checked>
           <span class="bugfix-copy">
             <strong>BugFix</strong>
-            <span>Ativado: os scalings de Tarot e da skill não recebem novamente Dano Causado. Desative para simular a mecânica bugada.</span>
           </span>
         </label>
 
@@ -788,27 +904,233 @@
               <div class="extra-result-value" id="adv-tarotDamage">1.000</div>
             </div>
             <div>
+              <div class="extra-result-label">Tarot</div>
+              <div class="extra-result-value" id="adv-tarotDamage2">1.000</div>
+            </div>
+            <div id="adv-doubleResult">
               <div class="extra-result-label" id="adv-doubleLabel">Flecha Relâmpago — Duplo (0,8x)</div>
               <div class="extra-result-value" id="adv-doubleDamage">800</div>
             </div>
-            <div>
+            <div id="adv-tripleResult">
               <div class="extra-result-label" id="adv-tripleLabel">Flecha Relâmpago — Triplo (0,4x)</div>
               <div class="extra-result-value" id="adv-tripleDamage">400</div>
             </div>
-            <div>
+            <div id="adv-tarotComboResult">
               <div class="extra-result-label" id="adv-tarotComboLabel">Tarot após Duplo + Triplo</div>
               <div class="extra-result-value" id="adv-tarotComboDamage">1.200</div>
             </div>
+            <div id="adv-tarotComboResult2">
+              <div class="extra-result-label" id="adv-tarotComboLabel2">Tarot após Duplo + Triplo</div>
+              <div class="extra-result-value" id="adv-tarotComboDamage2">1.200</div>
+            </div>
+          </div>
+          <div class="extra-results" style="margin-top:18px; border-top:1px solid #4b3b5b; padding-top:14px;">
+            <div class="extra-result-label">Dano Total</div>
+            <div class="extra-result-value" id="adv-totalDamage">0</div>
           </div>
         </div>
       </section>
     </div>
+    </section>
+    <section class="page-panel" id="panel-elemental" role="tabpanel" aria-labelledby="tab-elemental" hidden>
+    <div class="layout">
+      <aside class="panel skill-panel">
+        <h3>Habilidades</h3>
+        <div class="skill-selector" role="group" aria-label="Selecionar habilidade">
+          <button class="skill-option" type="button" data-skill="qualquer" aria-pressed="false">
+            <span class="skill-option-copy"><strong>Habilidade qualquer</strong></span>
+          </button>
+          <div class="class-list" aria-label="Classes">
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-0" aria-expanded="false">Cavaleiro Sagrado<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-0" hidden>
+<button class="skill-option" type="button" data-skill="golpeSangrento" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe Sangrento</strong></span></button>
+<button class="skill-option" type="button" data-skill="tempestadeCortante" aria-pressed="false"><span class="skill-option-copy"><strong>Tempestade Cortante</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-1" aria-expanded="false">Destruidor<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-1" hidden>
+<button class="skill-option" type="button" data-skill="tempestadeCortante" aria-pressed="false"><span class="skill-option-copy"><strong>Tempestade Cortante</strong></span></button>
+<button class="skill-option" type="button" data-skill="corteSaltado" aria-pressed="false"><span class="skill-option-copy"><strong>Corte Saltado</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-2" aria-expanded="true">Bruxo<span aria-hidden="true">−</span></button>
+            <div class="class-skills" data-class-group="class-2"  >
+<button class="skill-option" type="button" data-skill="flecha" aria-pressed="true"><span class="skill-option-copy"><strong>Flecha Relâmpago</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-3" aria-expanded="false">Shinigami<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-3" hidden>
+<button class="skill-option" type="button" data-skill="flechaSombra" aria-pressed="false"><span class="skill-option-copy"><strong>Flecha Sombra</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-4" aria-expanded="false">Predador<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-4" hidden>
+<button class="skill-option" type="button" data-skill="tiroParalisante" aria-pressed="false"><span class="skill-option-copy"><strong>Tiro Poderoso Paralisante</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-5" aria-expanded="false">Ninja<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-5" hidden>
+<button class="skill-option" type="button" data-skill="adaga" aria-pressed="false"><span class="skill-option-copy"><strong>Adaga Envenenada</strong></span></button>
+<button class="skill-option" type="button" data-skill="letal" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe Letal</strong></span></button>
+<button class="skill-option" type="button" data-skill="apunhaladaSombras" aria-pressed="false"><span class="skill-option-copy"><strong>Apunhalada das Sombras</strong></span></button>
+<button class="skill-option" type="button" data-skill="ataqueFurtivo" aria-pressed="false"><span class="skill-option-copy"><strong>Ataque Furtivo</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-6" aria-expanded="false">Santo<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-6" hidden>
+<button class="skill-option" type="button" data-skill="luzExplosiva" aria-pressed="false"><span class="skill-option-copy"><strong>Luz Explosiva</strong></span></button>
+<button class="skill-option" type="button" data-skill="batedorImpetuosoSagrado" aria-pressed="false"><span class="skill-option-copy"><strong>Batedor Impetuoso Sagrado</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-7" aria-expanded="false">Druida<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-7" hidden>
+<button class="skill-option" type="button" data-skill="rasgo" aria-pressed="false"><span class="skill-option-copy"><strong>Rasgo Cruel</strong></span></button>
+<button class="skill-option" type="button" data-skill="flechaMultiAsas" aria-pressed="false"><span class="skill-option-copy"><strong>Flecha Afiada Multi-Asas</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-8" aria-expanded="false">Ômega<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-8" hidden>
+<button class="skill-option" type="button" data-skill="talhoPulsanteSupremo" aria-pressed="false"><span class="skill-option-copy"><strong>Talho Pulsante Supremo</strong></span></button>
+<button class="skill-option" type="button" data-skill="corteNucleoSupremo" aria-pressed="false"><span class="skill-option-copy"><strong>Corte de Núcleo Supremo</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-9" aria-expanded="false">Titã Celeste<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-9" hidden>
+<p class="class-empty">Nenhuma habilidade cadastrada ainda.</p>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-10" aria-expanded="false">Mestre Dimensional<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-10" hidden>
+<button class="skill-option" type="button" data-skill="lampejoTeletransporte" aria-pressed="false"><span class="skill-option-copy"><strong>Lampejo de Teletransporte</strong></span></button>
+<button class="skill-option" type="button" data-skill="dancaCortanteCristal" aria-pressed="false"><span class="skill-option-copy"><strong>Dança Cortante de Cristal</strong></span></button>
+<button class="skill-option" type="button" data-skill="golpeDestruicao" aria-pressed="false"><span class="skill-option-copy"><strong>Golpe da Destruição</strong></span></button>
+</div></div>
+<div class="class-group">
+            <button class="class-toggle" type="button" data-class-toggle="class-11" aria-expanded="false">Cronos<span aria-hidden="true">+</span></button>
+            <div class="class-skills" data-class-group="class-11" hidden>
+<button class="skill-option" type="button" data-skill="aniquilacaoTempo" aria-pressed="false"><span class="skill-option-copy"><strong>Aniquilação do Tempo</strong></span></button>
+<button class="skill-option" type="button" data-skill="rompimentoTempo" aria-pressed="false"><span class="skill-option-copy"><strong>Rompimento do Tempo</strong></span></button>
+<button class="skill-option" type="button" data-skill="explosaoCaos" aria-pressed="false"><span class="skill-option-copy"><strong>Explosão do Caos</strong></span></button>
+</div></div>
+</div></div></aside>
 
-    <div class="notice">
-      <strong>Como funciona?</strong><br>
-      Cada multiplicador é aplicado diretamente ao resultado.
-      Por exemplo, 1,5 representa 150% e 3 representa 300%.
-      O cálculo é uma estimativa matemática configurável.
+      <section class="panel advanced-input-panel">
+        <h3>Multiplicadores de dano</h3>
+
+        <div class="advanced-fields-grid">
+          <div>
+            <div class="field">
+              <label for="elem-attack">Ataque Elemental</label>
+              <input id="elem-attack" type="number" min="0" step="any" value="1000">
+              <div class="hint">Valor numérico do ataque.</div>
+            </div>
+
+            <div class="field">
+              <label for="elem-skillFlat">Dano base da skill</label>
+              <input id="elem-skillFlat" type="number" min="0" step="any" value="0">
+            </div>
+
+            <div class="field">
+              <label for="elem-causedFlat">Dano causado flat</label>
+              <input id="elem-causedFlat" type="number" min="0" step="any" value="0">
+            </div>
+
+            <div class="field">
+              <label for="elem-caused">Dano causado</label>
+              <input id="elem-caused" type="number" min="0" step="any" value="1">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
+
+            <div class="field">
+              <label for="elem-weapon">Dano de arma</label>
+              <input id="elem-weapon" type="number" min="0" step="any" value="1">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
+
+            <div class="field">
+              <label for="elem-critical">Dano crítico</label>
+              <input id="elem-critical" type="number" min="1" step="any" value="1" aria-describedby="elem-critical-error">
+              <div class="critical-error" id="elem-critical-error" role="alert" hidden>O dano crítico não pode ser menor que 1.</div>
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
+
+            <div class="field">
+              <label for="elem-skill">Dano de skill</label>
+              <input id="elem-skill" type="number" min="0" step="any" value="1">
+              <div class="hint">1 = 100% · 2 = 200% · 3 = 300%</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="field">
+              <label for="elem-proficiency">Proficiência</label>
+              <input id="elem-proficiency" type="number" min="0" step="any" value="1">
+            </div>
+
+            <div class="field">
+              <label for="elem-defense">Resistência</label>
+              <input id="elem-defense" type="number" step="any" value="0">
+            </div>
+          </div>
+        </div>
+
+        <label class="bugfix-control" for="elem-bugfix">
+          <input id="elem-bugfix" type="checkbox" checked>
+          <span class="bugfix-copy">
+            <strong>BugFix</strong>
+          </span>
+        </label>
+
+        <label class="bugfix-control pvp-control" for="elem-pvp">
+          <input id="elem-pvp" type="checkbox">
+          <span class="bugfix-copy">
+            <strong>PvP</strong>
+          </span>
+        </label>
+
+        <button class="reset" id="elem-reset" type="button">
+          Restaurar valores iniciais
+        </button>
+      </section>
+
+      <section class="result-panel" aria-live="polite">
+        <div class="result-top">
+          <div class="result-label">DANO</div>
+          <div id="elem-damage">1.000</div>
+          
+          <div class="extra-results">
+            <div>
+              <div class="extra-result-label">Tarot</div>
+              <div class="extra-result-value" id="elem-tarotDamage">1.000</div>
+            </div>
+            <div>
+              <div class="extra-result-label">Tarot</div>
+              <div class="extra-result-value" id="elem-tarotDamage2">1.000</div>
+            </div>
+            <div id="elem-doubleResult">
+              <div class="extra-result-label" id="elem-doubleLabel">Flecha Relâmpago — Duplo (0,8x)</div>
+              <div class="extra-result-value" id="elem-doubleDamage">800</div>
+            </div>
+            <div id="elem-tripleResult">
+              <div class="extra-result-label" id="elem-tripleLabel">Flecha Relâmpago — Triplo (0,4x)</div>
+              <div class="extra-result-value" id="elem-tripleDamage">400</div>
+            </div>
+            <div id="elem-tarotComboResult">
+              <div class="extra-result-label" id="elem-tarotComboLabel">Tarot após Duplo + Triplo</div>
+              <div class="extra-result-value" id="elem-tarotComboDamage">1.200</div>
+            </div>
+            <div id="elem-tarotComboResult2">
+              <div class="extra-result-label" id="elem-tarotComboLabel2">Tarot após Duplo + Triplo</div>
+              <div class="extra-result-value" id="elem-tarotComboDamage2">1.200</div>
+            </div>
+          </div>
+          <div class="extra-results" style="margin-top:18px; border-top:1px solid #4b3b5b; padding-top:14px;">
+            <div class="extra-result-label">Dano Total</div>
+            <div class="extra-result-value" id="elem-totalDamage">0</div>
+          </div>
+        </div>
+      </section>
     </div>
     </section>
 
@@ -825,13 +1147,29 @@
       "use strict";
 
       const skillDefinitions = {
-        flecha: { name: "Flecha Relâmpago", double: 0.8, triple: 0.4 },
-        rasgo: { name: "Rasgo Cruel", double: 0.75, triple: 0.7 },
-        letal: { name: "Golpe Letal", double: 0.6, triple: 0.3 },
-        adaga: { name: "Adaga Envenenada", double: 0.75, triple: 0.7 },
-        tiroParalisante: { name: "Tiro Poderoso Paralisante", double: 0.8, triple: 0.4 },
-        flechaMultiAsas: { name: "Flecha Afiada Multi-Asas", double: 0.8, triple: 0.4 },
-        flechaSombra: { name: "Flecha Sombra", double: 0.7, triple: 0.35 }
+        flecha: { name: "Flecha Relâmpago", double: 0.8, triple: 0.4, baseDamage: 0 },
+        rasgo: { name: "Rasgo Cruel", double: 0.75, triple: 0.7, baseDamage: 0 },
+        letal: { name: "Golpe Letal", double: 0.6, triple: 0.3, baseDamage: 0 },
+        apunhaladaSombras: { name: "Apunhalada das Sombras", double: 0.6, noTriple: true, baseDamage: 0 },
+        ataqueFurtivo: { name: "Ataque Furtivo", double: 0.8, triple: 0.7, baseDamage: 0 },
+        adaga: { name: "Adaga Envenenada", double: 0.75, triple: 0.7, baseDamage: 0 },
+        tiroParalisante: { name: "Tiro Poderoso Paralisante", double: 0.8, triple: 0.4, baseDamage: 0 },
+        flechaMultiAsas: { name: "Flecha Afiada Multi-Asas", double: 0.8, triple: 0.4, baseDamage: 0 },
+        flechaSombra: { name: "Flecha Sombra", double: 0.7, triple: 0.35, baseDamage: 0 },
+        lampejoTeletransporte: { name: "Lampejo de Teletransporte", double: 0.6, triple: 0.3, baseDamage: 0 },
+        dancaCortanteCristal: { name: "Dança Cortante de Cristal", double: 0.6, noTriple: true, baseDamage: 0 },
+        golpeDestruicao: { name: "Golpe da Destruição", double: 0.8, triple: 0.4, baseDamage: 0 },
+        golpeSangrento: { name: "Golpe Sangrento", double: 0.8, triple: 0.5, baseDamage: 0 },
+        tempestadeCortante: { name: "Tempestade Cortante", double: 0.4, noTriple: true, baseDamage: 0 },
+        corteSaltado: { name: "Corte Saltado", double: 0.5, noTriple: true, baseDamage: 0 },
+        luzExplosiva: { name: "Luz Explosiva", double: 0.8, triple: 0.7, baseDamage: 0 },
+        batedorImpetuosoSagrado: { name: "Batedor Impetuoso Sagrado", double: 0.8, triple: 0.4, baseDamage: 0 },
+        talhoPulsanteSupremo: { name: "Talho Pulsante Supremo", double: 0.95, triple: 0.65, baseDamage: 0 },
+        corteNucleoSupremo: { name: "Corte de Núcleo Supremo", double: 0.8, triple: 0.5, baseDamage: 0 },
+        aniquilacaoTempo: { name: "Aniquilação do Tempo", double: 0.8, triple: 0.4, baseDamage: 0 },
+        rompimentoTempo: { name: "Rompimento do Tempo", double: 0.4, triple: 0.25, baseDamage: 0 },
+        explosaoCaos: { name: "Explosão do Caos", double: 0.8, triple: 0.4, baseDamage: 0 },
+        qualquer: { name: "Habilidade qualquer", noMulti: true, baseDamage: 0 }
       };
 
       function setupCalculator(panel, prefix = "") {
@@ -839,14 +1177,22 @@
         const fields = ["attack", "caused", "weapon", "critical", "skill"];
         const damageElement = get("damage");
         const tarotElement = get("tarotDamage");
+        const tarotElement2 = get("tarotDamage2");
+        const tarotComboElement2 = get("tarotComboDamage2");
+        const tarotComboResult2 = get("tarotComboResult2");
+        const totalDamageElement = get("totalDamage");
         const doubleElement = get("doubleDamage");
         const tripleElement = get("tripleDamage");
         const tarotComboElement = get("tarotComboDamage");
+        const doubleResult = get("doubleResult");
+        const tripleResult = get("tripleResult");
+        const tarotComboResult = get("tarotComboResult");
         const bugfixElement = get("bugfix");
         const pvpElement = get("pvp");
         const doubleLabel = get("doubleLabel");
         const tripleLabel = get("tripleLabel");
         const tarotComboLabel = get("tarotComboLabel");
+        const tarotComboLabel2 = get("tarotComboLabel2");
         const skillButtons = Array.from(panel.querySelectorAll("[data-skill]"));
         let selectedSkill = "flecha";
 
@@ -858,16 +1204,36 @@
           if (!skillDefinitions[skillId]) return;
           selectedSkill = skillId;
           const skill = skillDefinitions[selectedSkill];
+          if (prefix === "adv-" || prefix === "elem-") {
+            get("skillFlat").value = skill.baseDamage ?? 0;
+          }
           skillButtons.forEach((button) => {
             button.setAttribute("aria-pressed", String(button.dataset.skill === selectedSkill));
           });
           doubleLabel.textContent = `${skill.name} — Duplo`;
           tripleLabel.textContent = `${skill.name} — Triplo`;
-          tarotComboLabel.textContent = "Tarot";
+          const hasTripleScaling = Number.isFinite(skill.triple) && !skill.noTriple;
+          const comboLabel = hasTripleScaling ? "Tarot após Duplo + Triplo" : "Tarot após Duplo";
+          tarotComboLabel.textContent = comboLabel;
+          if (tarotComboLabel2) tarotComboLabel2.textContent = comboLabel;
+          doubleResult.hidden = Boolean(skill.noMulti);
+          tripleResult.hidden = Boolean(skill.noMulti || !hasTripleScaling);
+          tarotComboResult.hidden = Boolean(skill.noMulti);
+          tarotComboResult2.hidden = Boolean(skill.noMulti);
           calculateDamage();
         }
 
         function calculateDamage() {
+          const criticalInput = get("critical");
+          const criticalError = get("critical-error");
+          const criticalInvalid = criticalInput.value.trim() === "" || !Number.isFinite(Number(criticalInput.value)) || Number(criticalInput.value) < 1;
+          criticalError.hidden = !criticalInvalid;
+          criticalInput.setAttribute("aria-invalid", String(criticalInvalid));
+          if (criticalInvalid) {
+            [damageElement, tarotElement, doubleElement, tripleElement, tarotComboElement]
+              .forEach((element) => { element.textContent = "—"; });
+            return;
+          }
           const values = fields.map((id) => {
             const raw = get(id).value.trim();
             return raw === "" ? null : Number(raw);
@@ -887,82 +1253,163 @@
           const attackDamageBeforeDefense = attack * weapon * caused * critical * skill;
           let attackDamageAfterDefense = attackDamageBeforeDefense;
           let flatDamage = 0;
+          let elementalFlatDamage = 0;
+          let elementalMultiplier = 1;
+          let elementalDamage = 0;
 
-          if (prefix === "adv-") {
+          if (prefix === "adv-" || prefix === "elem-") {
             const defenseRaw = get("defense").value.trim();
-            const levelRaw = get("level").value.trim();
             const skillFlatRaw = get("skillFlat").value.trim();
             const causedFlatRaw = get("causedFlat").value.trim();
-            const penetrationRaw = get("penetration").value.trim();
-            const antiPenetrationRaw = get("antiPenetration").value.trim();
+            const trincaRaw = prefix === "adv-" ? get("trinca").value.trim() : "0";
             const defense = defenseRaw === "" ? null : Number(defenseRaw);
-            const level = levelRaw === "" ? null : Number(levelRaw);
             const skillFlat = skillFlatRaw === "" ? null : Number(skillFlatRaw);
             const causedFlat = causedFlatRaw === "" ? null : Number(causedFlatRaw);
-            const penetration = penetrationRaw === "" ? null : Number(penetrationRaw);
-            const antiPenetration = antiPenetrationRaw === "" ? null : Number(antiPenetrationRaw);
+            const trinca = trincaRaw === "" ? null : Number(trincaRaw);
 
-            if (
-              defense === null || level === null || skillFlat === null || causedFlat === null ||
-              penetration === null || antiPenetration === null ||
-              !Number.isFinite(defense) || !Number.isFinite(level) ||
-              !Number.isFinite(skillFlat) || !Number.isFinite(causedFlat) ||
-              !Number.isFinite(penetration) || !Number.isFinite(antiPenetration) ||
-              defense < 0 || level < 0 || skillFlat < 0 || causedFlat < 0 ||
-              penetration < 0 || penetration > 1 || antiPenetration < 0 || antiPenetration > 1
-            ) {
+            if (defense === null || skillFlat === null || causedFlat === null ||
+                (prefix === "adv-" && trinca === null) ||
+                !Number.isFinite(defense) || !Number.isFinite(skillFlat) || !Number.isFinite(causedFlat) ||
+                (prefix === "adv-" && !Number.isFinite(trinca)) ||
+                (prefix === "adv-" && defense < 0) || skillFlat < 0 || causedFlat < 0 || (prefix === "adv-" && trinca < 0)) {
               [damageElement, tarotElement, doubleElement, tripleElement, tarotComboElement]
                 .forEach((element) => { element.textContent = "—"; });
               return;
             }
 
-            // Anti-Penetração anula a Penetração adversária proporcionalmente.
-            // A penetração efetiva nunca fica abaixo de 0 nem acima de 100%.
-            const effectivePenetration = Math.max(0, Math.min(1, penetration - antiPenetration));
-            const effectiveDefense = defense * (1 - effectivePenetration);
-            // Defesa: max(0, 1 - defesa efetiva / ((nível + 9) * 100)).
-            // Nível 100 e defesa 10900 anulam somente a parcela baseada no ataque.
-            const defenseMultiplier = Math.max(0, 1 - effectiveDefense / ((level + 9) * 100));
-            attackDamageAfterDefense = attackDamageBeforeDefense * defenseMultiplier;
-
-            // Parcela 2: flats somados e multiplicados por Dano Causado, Crítico e Skill.
-            // A defesa NÃO reduz esta parcela.
-            flatDamage = (skillFlat + causedFlat) * caused * critical * skill;
+            if (prefix === "adv-") {
+              const levelRaw = get("level").value.trim();
+              const penetrationRaw = get("penetration").value.trim();
+              const defenseMultiplierRaw = get("defenseMultiplier").value.trim();
+              const level = levelRaw === "" ? null : Number(levelRaw);
+              const penetration = penetrationRaw === "" ? null : Number(penetrationRaw);
+              const defenseMultiplier = defenseMultiplierRaw === "" ? null : Number(defenseMultiplierRaw);
+              if (level === null || penetration === null || defenseMultiplier === null ||
+                  !Number.isFinite(level) || !Number.isFinite(penetration) || !Number.isFinite(defenseMultiplier) ||
+                  level < 0 || penetration < 0 || penetration > 1 || defenseMultiplier < 0) {
+                [damageElement, tarotElement, doubleElement, tripleElement, tarotComboElement]
+                  .forEach((element) => { element.textContent = "—"; });
+                return;
+              }
+              const effectivePenetration = Math.max(0, Math.min(1, penetration));
+              const defenseAfterTrinca = Math.max(0, defense * (defenseMultiplier - trinca));
+              const effectiveDefense = defenseAfterTrinca * (1 - effectivePenetration);
+              const defenseReductionMultiplier = Math.max(0, 1 - effectiveDefense / ((level + 9) * 100));
+              attackDamageAfterDefense = attackDamageBeforeDefense * defenseReductionMultiplier;
+            } else {
+              const proficiencyRaw = get("proficiency").value.trim();
+              const proficiencyValue = proficiencyRaw === "" ? null : Number(proficiencyRaw);
+              if (proficiencyValue === null || !Number.isFinite(proficiencyValue) || proficiencyValue < 0) {
+                [damageElement, tarotElement, doubleElement, tripleElement, tarotComboElement]
+                  .forEach((element) => { element.textContent = "—"; });
+                return;
+              }
+              // O multiplicador Proficiência x Resistência é calculado separadamente, sem ser alterado por Dano Causado.
+              // Multi Elemental = (Proficiência - (Resistência / 2)) / Resistência.
+              // Dano Elemental = (Ataque Elemental * Dano Crítico * Dano de Skill * Dano de Arma * Dano Causado) * Multi Elemental.
+              // Resistência igual ou inferior a zero anula apenas a parcela de dano elemental.
+              elementalMultiplier = defense <= 0 ? 0 : (proficiencyValue - (defense / 2)) / defense;
+              const elementalBaseDamage = attack * critical * skill * weapon * caused;
+              elementalDamage = defense <= 0 ? 0 : elementalBaseDamage * elementalMultiplier;
+            }
+            // O dano base da skill e o dano flat causado NÃO usam Multi Elemental.
+            // Na aba Elemental, são multiplicados apenas por Dano Causado, Dano Crítico e Dano de Skill,
+            // e depois somados ao hit elemental já calculado com Proficiência x Resistência.
+            if (prefix === "elem-") {
+              elementalFlatDamage = (skillFlat + causedFlat) * caused * critical * skill;
+            } else {
+              // Nas demais abas, preserva a fórmula flat existente.
+              flatDamage = (skillFlat + causedFlat) * caused * critical * skill;
+            }
           }
 
-          // Dano principal = parcela de ataque após defesa + parcela flat; PvP afeta o total.
-          const finalDamage = (attackDamageAfterDefense + flatDamage) * pvpMultiplier;
+          // Na aba Elemental, dano elemental negativo ou zero não contribui para o resultado; soma-se apenas o flat.
+          // As fórmulas das abas Básico e Avançado permanecem inalteradas.
+          const effectiveElementalDamage = Math.max(0, elementalDamage);
+          const finalDamage = prefix === "elem-"
+            ? (effectiveElementalDamage + elementalFlatDamage) * pvpMultiplier
+            : (attackDamageAfterDefense + flatDamage) * elementalMultiplier * pvpMultiplier;
 
-          // Na aba Avançado, Tarot/Duplo/Triplo partem do dano geral do golpe:
-          // parcela de ataque após defesa + parcela flat. Os scalings atuais continuam aplicados.
-          // A aba Básico preserva o comportamento original.
-          const sideDamage = prefix === "adv-"
-            ? (attackDamageAfterDefense + flatDamage)
-            : attackDamageBeforeDefense;
+          // Tarot/Duplo/Triplo da aba Elemental usam a base elemental positiva (se houver) + parcela flat.
+          // Avançado mantém ataque após defesa + flat; Básico mantém sua base original.
+          const sideDamage = prefix === "elem-"
+            ? effectiveElementalDamage + elementalFlatDamage
+            : prefix === "adv-"
+              ? (attackDamageAfterDefense + flatDamage) * elementalMultiplier
+              : attackDamageBeforeDefense;
           const tarotDamage = sideDamage * bugMultiplier * pvpMultiplier;
-          const doubleDamage = sideDamage * skillConfig.double * bugMultiplier * pvpMultiplier;
-          const tripleDamage = sideDamage * skillConfig.triple * bugMultiplier * pvpMultiplier;
-          const combinedArrowDamage = sideDamage * skillConfig.double * bugMultiplier +
-            sideDamage * skillConfig.triple * bugMultiplier;
-          const tarotComboDamage = combinedArrowDamage * bugMultiplier * pvpMultiplier;
+          const doubleDamage = skillConfig.noMulti ? 0 : sideDamage * skillConfig.double * bugMultiplier * pvpMultiplier;
+          const hasTripleScaling = Number.isFinite(skillConfig.triple) && !skillConfig.noTriple;
+          const tripleDamage = (skillConfig.noMulti || !hasTripleScaling) ? 0 : sideDamage * skillConfig.triple * bugMultiplier * pvpMultiplier;
+          // Tarot após Duplo/Triplo segue os próprios hits exibidos: soma Duplo + Triplo.
+          // Com BugFix marcado, mantém essa soma; desmarcado, multiplica a soma por Dano Causado.
+          // Como os hits já incluem PvP, não reaplicamos esse multiplicador no Tarot combinado.
+          const combinedSkillHit = doubleDamage + tripleDamage;
+          const tarotComboDamage = skillConfig.noMulti ? 0 :
+            combinedSkillHit * (bugfixElement.checked ? 1 : caused);
 
-          damageElement.textContent = formatNumber(finalDamage);
-          tarotElement.textContent = formatNumber(tarotDamage);
-          doubleElement.textContent = formatNumber(doubleDamage);
-          tripleElement.textContent = formatNumber(tripleDamage);
-          tarotComboElement.textContent = formatNumber(tarotComboDamage);
+          // Na aba Elemental, nenhum resultado exibido pode ficar abaixo de zero.
+          const displayedFinalDamage = prefix === "elem-" ? Math.max(0, finalDamage) : finalDamage;
+          const displayedTarotDamage = prefix === "elem-" ? Math.max(0, tarotDamage) : tarotDamage;
+          const displayedDoubleDamage = prefix === "elem-" ? Math.max(0, doubleDamage) : doubleDamage;
+          const displayedTripleDamage = prefix === "elem-" ? Math.max(0, tripleDamage) : tripleDamage;
+          const displayedTarotComboDamage = prefix === "elem-" ? Math.max(0, tarotComboDamage) : tarotComboDamage;
+          damageElement.textContent = formatNumber(displayedFinalDamage);
+          tarotElement.textContent = formatNumber(displayedTarotDamage);
+          tarotElement2.textContent = formatNumber(displayedTarotDamage);
+          doubleElement.textContent = formatNumber(displayedDoubleDamage);
+          tripleElement.textContent = formatNumber(displayedTripleDamage);
+          tarotComboElement.textContent = formatNumber(displayedTarotComboDamage);
+          tarotComboElement2.textContent = formatNumber(displayedTarotComboDamage);
+          const totalDamage = displayedFinalDamage
+            + displayedTarotDamage * 2
+            + (doubleResult.hidden ? 0 : displayedDoubleDamage)
+            + (tripleResult.hidden ? 0 : displayedTripleDamage)
+            + (tarotComboResult.hidden ? 0 : displayedTarotComboDamage * 2);
+          totalDamageElement.textContent = formatNumber(totalDamage);
         }
 
         fields.forEach((id) => get(id).addEventListener("input", calculateDamage));
-        if (prefix === "adv-") {
+        const criticalInput = get("critical");
+        criticalInput.addEventListener("change", () => {
+          if (criticalInput.value.trim() === "" || !Number.isFinite(Number(criticalInput.value)) || Number(criticalInput.value) < 1) {
+            criticalInput.value = "1";
+          }
+          calculateDamage();
+        });
+        if (prefix === "adv-" || prefix === "elem-") {
           get("skillFlat").addEventListener("input", calculateDamage);
           get("causedFlat").addEventListener("input", calculateDamage);
           get("defense").addEventListener("input", calculateDamage);
-          get("level").addEventListener("input", calculateDamage);
-          get("penetration").addEventListener("input", calculateDamage);
-          get("antiPenetration").addEventListener("input", calculateDamage);
+          if (prefix === "adv-") {
+            get("trinca").addEventListener("input", calculateDamage);
+            get("level").addEventListener("input", calculateDamage);
+            get("penetration").addEventListener("input", calculateDamage);
+            get("defenseMultiplier").addEventListener("input", calculateDamage);
+          } else {
+            get("proficiency").addEventListener("input", calculateDamage);
+          }
         }
         skillButtons.forEach((button) => button.addEventListener("click", () => selectSkill(button.dataset.skill)));
+        // Inicializa explicitamente a visibilidade para não depender apenas do atributo hidden.
+        const classGroups = Array.from(panel.querySelectorAll("[data-class-group]"));
+        classGroups.forEach((group) => {
+          group.style.display = group.hidden ? "none" : "grid";
+        });
+        panel.querySelectorAll("[data-class-toggle]").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const group = classGroups.find((item) => item.dataset.classGroup === button.dataset.classToggle);
+            if (!group) return;
+            const willOpen = group.style.display === "none";
+            group.hidden = !willOpen;
+            group.style.display = willOpen ? "grid" : "none";
+            button.setAttribute("aria-expanded", String(willOpen));
+            const marker = button.querySelector("span");
+            if (marker) marker.textContent = willOpen ? "−" : "+";
+          });
+        });
         bugfixElement.addEventListener("change", calculateDamage);
         pvpElement.addEventListener("change", calculateDamage);
         get("reset").addEventListener("click", () => {
@@ -972,9 +1419,14 @@
             get("skillFlat").value = 0;
             get("causedFlat").value = 0;
             get("defense").value = 0;
-            get("level").value = 100;
-            get("penetration").value = 0;
-            get("antiPenetration").value = 0;
+            if (prefix === "adv-") {
+              get("trinca").value = 0;
+              get("level").value = 100;
+              get("penetration").value = 0;
+              get("defenseMultiplier").value = 1;
+            } else {
+              get("proficiency").value = 1;
+            }
           }
           bugfixElement.checked = true;
           pvpElement.checked = false;
@@ -983,12 +1435,21 @@
         selectSkill("flecha");
       }
 
+      // Impede que a roda do mouse altere valores numéricos/multiplicadores.
+      document.querySelectorAll('input[type="number"]').forEach((input) => {
+        input.addEventListener("wheel", (event) => {
+          if (document.activeElement === input) event.preventDefault();
+        }, { passive: false });
+      });
+
       setupCalculator(document.getElementById("panel-basic"));
       setupCalculator(document.getElementById("panel-advanced"), "adv-");
+      setupCalculator(document.getElementById("panel-elemental"), "elem-");
 
       const tabs = [
         { button: document.getElementById("tab-basic"), panel: document.getElementById("panel-basic") },
-        { button: document.getElementById("tab-advanced"), panel: document.getElementById("panel-advanced") }
+        { button: document.getElementById("tab-advanced"), panel: document.getElementById("panel-advanced") },
+        { button: document.getElementById("tab-elemental"), panel: document.getElementById("panel-elemental") }
       ];
       tabs.forEach(({ button, panel }) => button.addEventListener("click", () => {
         tabs.forEach((tab) => {
@@ -999,5 +1460,7 @@
       }));
     })();
   </script>
+  
+
 </body>
 </html>
