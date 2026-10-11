@@ -530,7 +530,7 @@
     <div class="page-tabs" role="tablist" aria-label="Versão da calculadora">
       <button class="page-tab" id="tab-basic" type="button" role="tab" aria-selected="true" aria-controls="panel-basic">Básico</button>
       <button class="page-tab" id="tab-advanced" type="button" role="tab" aria-selected="false" aria-controls="panel-advanced">Avançado</button>
-      <button class="page-tab" id="tab-elemental" type="button" role="tab" aria-selected="false" aria-controls="panel-elemental">Elemental(Incompleto)</button>
+      <button class="page-tab" id="tab-elemental" type="button" role="tab" aria-selected="false" aria-controls="panel-elemental">Elemental</button>
     </div>
 
     <section class="page-panel" id="panel-basic" role="tabpanel" aria-labelledby="tab-basic">
@@ -1305,12 +1305,14 @@
                 return;
               }
               // O multiplicador Proficiência x Resistência é calculado separadamente, sem ser alterado por Dano Causado.
-              // Multi Elemental = (Proficiência - (Resistência / 2)) / Resistência.
+              // Resistência >= 0: (Proficiência - (Resistência / 2)) / max(1, Resistência).
+              // Resistência < 0: Proficiência - Resistência.
               // Dano Elemental = (Ataque Elemental * Dano Crítico * Dano de Skill * Dano de Arma * Dano Causado) * Multi Elemental.
-              // Resistência igual ou inferior a zero anula apenas a parcela de dano elemental.
-              elementalMultiplier = defense <= 0 ? 0 : (proficiencyValue - (defense / 2)) / defense;
+              elementalMultiplier = defense < 0
+                ? proficiencyValue - defense
+                : (proficiencyValue - (defense / 2)) / Math.max(1, defense);
               const elementalBaseDamage = attack * critical * skill * weapon * caused;
-              elementalDamage = defense <= 0 ? 0 : elementalBaseDamage * elementalMultiplier;
+              elementalDamage = elementalBaseDamage * elementalMultiplier;
             }
             // O dano base da skill e o dano flat causado NÃO usam Multi Elemental.
             // Na aba Elemental, são multiplicados apenas por Dano Causado, Dano Crítico e Dano de Skill,
