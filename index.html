@@ -1017,6 +1017,7 @@
 
       <section class="panel advanced-input-panel">
         <h3>Multiplicadores de dano</h3>
+        <p class="hint elemental-instructions">Caso sua habilidade tenha dano elemental base, adicione o valor no campo Ataque Elemental. O dano físico/mágico da habilidade deve ser preenchido no campo Dano base da skill.</p>
 
         <div class="advanced-fields-grid">
           <div>
@@ -1413,7 +1414,10 @@
           });
         });
         bugfixElement.addEventListener("change", calculateDamage);
-        pvpElement.addEventListener("change", calculateDamage);
+        pvpElement.addEventListener("change", () => {
+          if (pvpElement.checked) bugfixElement.checked = true;
+          calculateDamage();
+        });
         get("reset").addEventListener("click", () => {
           const defaults = { attack: 1000, caused: 1, weapon: 1, critical: 1, skill: 1 };
           fields.forEach((id) => { get(id).value = defaults[id]; });
